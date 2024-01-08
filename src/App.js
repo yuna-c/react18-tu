@@ -5,6 +5,11 @@ function App() {
   const [Count, setCount] = useState(0);
   const [Items, setItems] = useState([]);
 
+  //하나의 핸들러함수 안쪽에 화면의 재랜더링을 담당하는 2개의 state값 있음
+  //Count - 중요한 정보값이고 빠르게 연산이 가능한 값
+  //Items - 상대적으로 덜 중요한 정보값이고 연산시간이 긴 정보값
+  //기존 useTranstion이 없을때에는 덜중요한 정보값인 Items의 연산이 끝나지 않았기 때문에 상대적으로 빠르게 처리할 수 있는 Count값 까지 화면에 늦게 출력이 됨
+  //기존 사용자는 무거운 연산을 필요로하는 state값이 만들어질떄까지는 계속해서 갱신된 화면을 늦게 보게 되는 문제발생
   const handleClick = () => {
     setCount(Count + 1);
 
