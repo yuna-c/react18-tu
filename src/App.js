@@ -1,29 +1,38 @@
-import { useState } from 'react';
+import { useState, useTransition } from 'react';
 import './global.scss';
 
 function App() {
   const [Count, setCount] = useState(0);
   const [Items, setItems] = useState([]);
+  const [isPending, startTransition] = useTransition();
+  console.log(isPending);
 
-  //하나의 핸들러함수 안쪽에 화면의 재랜더링을 담당하는 2개의 state값 있음
-  //Count - 중요한 정보값이고 빠르게 연산이 가능한 값
-  //Items - 상대적으로 덜 중요한 정보값이고 연산시간이 긴 정보값
-  //기존 useTranstion이 없을때에는 덜중요한 정보값인 Items의 연산이 끝나지 않았기 때문에 상대적으로 빠르게 처리할 수 있는 Count값 까지 화면에 늦게 출력이 됨
-  //기존 사용자는 무거운 연산을 필요로하는 state값이 만들어질떄까지는 계속해서 갱신된 화면을 늦게 보게 되는 문제발생
+  //아래 함수에서는 덜중요하고 무거운 연산때문에 급하고 중요한 연산까지 덩달아 늦게 화면에 렌더링
   const handleClick = () => {
+    //급하게 처리해야될 중요한 연산 urgent op
     setCount(Count + 1);
 
-    const arr = Array(20000)
-      .fill(1)
-      .map((_, idx) => Count + idx);
+    //시간이 많이 걸리고 우선순위가 떨어지는 덜 중요한 연산 not urgent op
+    //우선순위가 떨어지는 연산구문을 startTransition의 콜백함수로 전달
+    startTransition(() => {
+      const arr = Array(20000)
+        .fill(1)
+        .map((_, idx) => Count + idx);
 
-    setItems(arr);
+      setItems(arr);
+    });
   };
 
   return (
     <div className="App">
-      <button onClick={handleClick}>{Count}</button>
+      {/* 버튼 클릭할때마다 Count값만 먼저 연산이 일어나서 부분적으로 중요한 버튼 내용 먼저 갱신 */}
+      {/* 초기 로딩시 연산이 오래걸리지 않는 컨텐츠를 미리 화면에 띄워줌 */}
+      {/* isPending값을 이용해서 startTransition으로 실행되는 무거운 연산이 끝났을때 다시 이벤트 호출가능하게 처리 */}
+      <button onClick={handleClick} disabled={isPending}>
+        {Count}
+      </button>
       <ul>
+        {/* startTransition으로 우선순위를 뒤로 빼놓은 Items값은 좀 뒤에 연산처리 */}
         {Items.map((num) => (
           <li key={num}>{num}</li>
         ))}
