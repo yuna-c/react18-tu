@@ -1,48 +1,37 @@
-import News from './components/news/News';
-import Pics from './components/pics/Pics';
-import Visual from './components/visual/Visual';
-import './global.scss';
 import { useState } from 'react';
-import { flushSync } from 'react-dom';
+import './global.scss';
 
 function App() {
-  console.log('re-render');
-  const [Count1, setCount1] = useState(1);
-  const [Count2, setCount2] = useState(2);
-  const [Count3, setCount3] = useState(3);
+  const [Count, setCount] = useState(0);
+  const [Items, setItems] = useState([]);
 
-  const returnPromise = () => {
-    return new Promise((res) => setTimeout(res, 500));
+  const handleClick = () => {
+    setCount(Count + 1);
+
+    const arr = Array(20000)
+      .fill(1)
+      .map((_, idx) => Count + idx);
+
+    setItems(arr);
   };
 
-  const changeState = () => {
-    returnPromise().then(() => {
-      //특정 State값을 Auto Batching에서 제외처리
-      flushSync(() => {
-        setCount1(Count1 + 1);
-      });
-      flushSync(() => {
-        setCount2(Count2 + 1);
-      });
-      setCount3(Count3 + 1);
-    });
-  };
   return (
     <div className="App">
-      <button onClick={changeState}>변경</button>
-      <h1>
-        {Count1}-{Count2}-{Count3}
-      </h1>
-      <Visual />
-      <News />
-      <Pics />
+      <button onClick={handleClick}>{Count}</button>
+      <ul>
+        {Items.map((num) => (
+          <li key={num}>{num}</li>
+        ))}
+      </ul>
     </div>
   );
 }
 
 export default App;
+
 /*
-  Automatic Batching
-  :여러개의 state가 하나의 핸들러함수 안쪽에서 동시에 변경이 될때 그룹으로 묶어서 한번만 렌더링 처리
-  :17에도 Batching기능이 동작되긴 하나 Promise를 반환하는 핸들러안쪽에 여러개의 state가 변경될 경우에는 동작안됨
+  useTransition
+  : 컴포넌트 렌더링시 연산의 우선순위를 둬서 좀 늦게 렌더링해도 될 것들을 선별지정
+  : 기존(17)에는 한번 렌더링 연산이 시작되면 중간에 멈추는게 불가능
+  : 특정 핸들러함수에 의해서 화면을 재연산해야 되는 경우 중간에 무거운 로직이 실행되는 연산이 있다면 굳이 무서운 연산이 필요없는 컴포넌트까지 같이 지연이 일어나서 전반적인 로딩속도에 악영향 
 */
