@@ -36,8 +36,12 @@ export default function Btns(opt) {
     secs.current.forEach((_, idx) => {
       if (scroll >= secs.current[idx].offsetTop + baseLine.current) {
         const btnsArr = btns.current?.querySelectorAll('li');
+        //btn활성화
         btnsArr?.forEach((btn) => btn.classList.remove('on'));
         btns.current?.querySelectorAll('li')[idx]?.classList.add('on');
+        //secs활성화
+        secs.current?.forEach((sec) => sec.classList.remove('on'));
+        secs.current[idx]?.classList.add('on');
       }
     });
   };
@@ -78,10 +82,11 @@ export default function Btns(opt) {
   //동적으로 버튼 생성하고 window객체에 이벤트 연결 (scroll, resize, mousewheel)
   useEffect(() => {
     secs.current = document.querySelectorAll(resultOpt.current.items);
+    secs.current[0]?.classList.add('on');
     setNum(secs.current.length);
 
     window.addEventListener('resize', throttledModifyPos);
-    window.addEventListener('scroll', throttledActivation);
+    window.addEventListener('scroll', throttledActivation, 200);
     isAutoScroll.current && window.addEventListener('mousewheel', autoScroll);
 
     return () => {
