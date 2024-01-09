@@ -4,29 +4,29 @@ import { useRef, useState, useEffect, useCallback } from 'react';
 import { useThrottle } from '../../hooks/useThrottle';
 
 export default function Btns(opt) {
-  //Btns Nums
+  //동적으로 button생성시키위한 State 초기화
   const [Num, setNum] = useState(0);
 
-  //default Options
+  //디폴트 컴포넌트 옵션
   const defOpt = useRef({
     items: '.myScroll',
     base: -window.innerHeight / 2,
     isAuto: false,
   });
 
-  //combined Options
+  //결합된 컴포넌트 옵션
   const resultOpt = useRef({ ...defOpt.current, ...opt });
 
-  //enable AutoScroll option
+  //autoScrolling기능 활성화 유무를 위한 참조객체
   const isAutoScroll = useRef(resultOpt.current.isAuto);
-  //myScroll sections ref array
+  //sections요소를 담을 참조객체
   const secs = useRef(null);
-  //btns ref array
+  //btns 요소를 담을 참조객체
   const btns = useRef(null);
-  //scroll baseLine
+  //scroll 기준점
   const baseLine = useRef(resultOpt.current.base);
 
-  //btn activation func when scroll
+  //스크롤시 버튼 활성화시킬 함수
   const activation = () => {
     const scroll = window.scrollY;
 
@@ -39,12 +39,12 @@ export default function Btns(opt) {
     });
   };
 
-  //scroll motion func when click
+  //클릭시 자동 스크롤 이동 함수
   const moveScroll = (idx) => {
     new Anime(window, { scroll: secs.current[idx].offsetTop });
   };
 
-  //auto scrolling func when mouse wheel
+  //마우스휠 시 자동 스크롤 이동함수
   const autoScroll = useCallback(
     (e) => {
       const btnsArr = Array.from(btns.current.children);
@@ -60,7 +60,7 @@ export default function Btns(opt) {
     [Num]
   );
 
-  //modify scroll position when resize
+  //리사이즈시 최신 위치값 갱신해주고 해당 위치로 스크롤위치 보정하는 함수
   const modifyPos = () => {
     const btnsArr = Array.from(btns.current.children);
     const activeEl = btns.current.querySelector('li.on');
@@ -68,11 +68,11 @@ export default function Btns(opt) {
     window.scrollTo(0, secs.current[activeIndex].offsetTop);
   };
 
-  //throttling activation, modify func
+  //activation, modifyPos 쓰로틀링
   const throttledActivation = useThrottle(activation);
   const throttledModifyPos = useThrottle(modifyPos, 200);
 
-  //Btns creates, Binding Window Events(scroll, resize, mousewheel) When component mounts
+  //동적으로 버튼 생성하고 window객체에 이벤트 연결 (scroll, resize, mousewheel)
   useEffect(() => {
     secs.current = document.querySelectorAll(resultOpt.current.items);
     setNum(secs.current.length);
@@ -93,7 +93,7 @@ export default function Btns(opt) {
       {Array(Num)
         .fill()
         .map((_, idx) => {
-          //create button and event Binding
+          //동적으로 버튼 생성 및 클릭 이벤트 핸들러 연결
           return (
             <li
               key={idx}
