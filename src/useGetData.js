@@ -1,3 +1,8 @@
+//data fetching   (axios, fetch)
+//axios (라이브러리) : 데이터입출력요청에 대한 전용메서드, 비동데이터 반환에러의 상태값을 실시간 체크해서 catch로 잡을 수 있음
+//fetch (js내장함수) : 데이터입출력요청에 대한 전용메서드 없음, network상의 문제가 있을때만 catch로 에러를 잡아주기 때문에
+//비동기데이터 반환실패에 대한 상태값을 수동으로 직접 연결
+
 import { useState, useEffect } from 'react';
 import axios from 'axios';
 
@@ -9,11 +14,11 @@ const checkPromiseStatus = (promise) => {
   //promise의 상태에 따라 현재 상태값과 반환값을 각각 status, result변수에 담아줌
   const setPromise = promise.then(
     (value) => {
-      status = 'success';
+      status = 'fulfilled';
       result = value;
     },
     (error) => {
-      status = 'error';
+      status = 'rejected';
       result = error;
     }
   );
@@ -23,9 +28,9 @@ const checkPromiseStatus = (promise) => {
     switch (status) {
       case 'pending':
         throw setPromise;
-      case 'success':
+      case 'fulfilled':
         return result;
-      case 'error':
+      case 'rejected':
         throw result;
       default:
         throw new Error('Unknown Staus');
