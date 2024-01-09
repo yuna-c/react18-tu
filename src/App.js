@@ -1,3 +1,4 @@
+import Btns from './components/btns/Btns';
 import News from './components/news/News';
 import Pics from './components/pics/Pics';
 import Visual from './components/visual/Visual';
@@ -9,6 +10,7 @@ function App() {
       <Visual />
       <News />
       <Pics />
+      <Btns />
     </div>
   );
 }
