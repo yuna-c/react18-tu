@@ -5,22 +5,25 @@ export default function News() {
   const thisEl = useRef(null);
   const boxEl = useRef(null);
 
+  const handleScroll = () => {
+    const currentPos = thisEl.current.offsetTop;
+    const scroll = window.scrollY;
+    const modifiedScroll = scroll - currentPos;
+
+    if (modifiedScroll >= 0) {
+      boxEl.current.style.transform = `rotate(${modifiedScroll}deg)`;
+    } else {
+      boxEl.current.style.transform = `rotate(0deg)`;
+    }
+  };
+
   useEffect(() => {
-    window.addEventListener('scroll', () => {
-      const currentPos = thisEl.current.offsetTop;
-      const scroll = window.scrollY;
-      const modifiedScroll = scroll - currentPos;
-      console.log(modifiedScroll);
-      if (modifiedScroll >= 0) {
-        boxEl.current.style.transform = `rotate(${modifiedScroll}deg)`;
-      } else {
-        boxEl.current.style.transform = `rotate(0deg)`;
-      }
-    });
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
   return (
-    <section className="News" ref={thisEl}>
+    <section className="News myScroll" ref={thisEl}>
       <div className="box" ref={boxEl}></div>
     </section>
   );
