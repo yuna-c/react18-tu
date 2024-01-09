@@ -1,8 +1,18 @@
 import useGetData from './useGetData';
-console.log(useGetData);
 
 export default function Post() {
-  useGetData('https://jsonplaceholder.typicode.com/posts');
+  const data = useGetData('https://jsonplaceholder.typicode.com/posts');
+  console.log(data);
 
-  return <div className="Post">Post</div>;
+  return (
+    <section className="Post">
+      {data &&
+        data.map((post) => (
+          <article key={post.id}>
+            <h2>{post.title}</h2>
+            <p>{post.body}</p>
+          </article>
+        ))}
+    </section>
+  );
 }
