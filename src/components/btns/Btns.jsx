@@ -4,19 +4,29 @@ import { useRef, useState, useEffect, useCallback } from 'react';
 import { useThrottle } from '../../hooks/useThrottle';
 
 export default function Btns(opt) {
+  //Btns Nums
+  const [Num, setNum] = useState(0);
+
+  //default Options
   const defOpt = useRef({
     items: '.myScroll',
     base: -window.innerHeight / 2,
     isAuto: false,
   });
-  const resultOpt = useRef({ ...defOpt.current, ...opt });
-  const [Num, setNum] = useState(0);
 
+  //combined Options
+  const resultOpt = useRef({ ...defOpt.current, ...opt });
+
+  //enable AutoScroll option
   const isAutoScroll = useRef(resultOpt.current.isAuto);
+  //myScroll sections ref array
   const secs = useRef(null);
+  //btns ref array
   const btns = useRef(null);
+  //scroll baseLine
   const baseLine = useRef(resultOpt.current.base);
 
+  //btn activation func when scroll
   const activation = () => {
     const scroll = window.scrollY;
 
@@ -29,10 +39,12 @@ export default function Btns(opt) {
     });
   };
 
+  //scroll motion func when click
   const moveScroll = (idx) => {
     new Anime(window, { scroll: secs.current[idx].offsetTop });
   };
 
+  //auto scrolling func when mouse wheel
   const autoScroll = useCallback(
     (e) => {
       const btnsArr = Array.from(btns.current.children);
@@ -48,6 +60,7 @@ export default function Btns(opt) {
     [Num]
   );
 
+  //modify scroll position when resize
   const modifyPos = () => {
     const btnsArr = Array.from(btns.current.children);
     const activeEl = btns.current.querySelector('li.on');
@@ -55,9 +68,11 @@ export default function Btns(opt) {
     window.scrollTo(0, secs.current[activeIndex].offsetTop);
   };
 
+  //throttling activation, modify func
   const throttledActivation = useThrottle(activation);
   const throttledModifyPos = useThrottle(modifyPos, 200);
 
+  //Btns creates, Binding Window Events(scroll, resize, mousewheel) When component mounts
   useEffect(() => {
     secs.current = document.querySelectorAll(resultOpt.current.items);
     setNum(secs.current.length);
@@ -78,6 +93,7 @@ export default function Btns(opt) {
       {Array(Num)
         .fill()
         .map((_, idx) => {
+          //create button and event Binding
           return (
             <li
               key={idx}
