@@ -19,10 +19,13 @@ export default function Btns(opt) {
 
   //autoScrolling기능 활성화 유무를 위한 참조객체
   const isAutoScroll = useRef(resultOpt.current.isAuto);
+
   //sections요소를 담을 참조객체
   const secs = useRef(null);
+
   //btns 요소를 담을 참조객체
   const btns = useRef(null);
+
   //scroll 기준점
   const baseLine = useRef(resultOpt.current.base);
 
