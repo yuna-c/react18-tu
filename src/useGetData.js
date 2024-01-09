@@ -1,20 +1,26 @@
 import { useState, useEffect } from 'react';
 
 const checkPromiseStatus = (response) => {
+  console.log(response);
   let status = 'pending';
   let result;
-
   console.log({ status, result });
 
   if (response.ok) {
     status = 'fulfilled';
     result = response;
+    console.log({ status, result });
   } else {
     status = 'rejected';
     result = 'error';
+    console.log({ status, result });
   }
 
-  return { status, result };
+  if (status === 'penidng') throw new Error('Still Loading');
+  if (status === 'fulfilled') {
+    return result.json();
+  }
+  if (status === 'rejected') throw result;
 };
 
 function useGetData(url) {
@@ -23,10 +29,15 @@ function useGetData(url) {
   useEffect(() => {
     const getData = async () => {
       const promise = await fetch(url);
-      const promiseStatus = checkPromiseStatus(promise);
-      console.log(promiseStatus);
-      const data = await promise.json();
-      setData(data);
+      console.log(
+        checkPromiseStatus(promise).then((json) => {
+          console.log(json);
+          setData(json);
+        })
+      );
+
+      //const promiseStatus = checkPromiseStatus(promise);
+      //console.log(promiseStatus);
     };
 
     getData();
